@@ -42,6 +42,96 @@ Ext.onReady(function() {
         }
     });
 
+    var panelwindow=Ext.create('Ext.form.Panel', {
+        id: 'panelId',
+        store: store,
+        title: 'Login Window',
+        closable: false,
+        height:500,
+        width:500,
+        align: 'center',
+        style: 'margin:0 auto;margin-top:100px;',
+        pack: 'center',
+        autoShow: true,
+        renderTo:document.body, // Div id where the grid has to be rendered
+        viewModel: {
+            type: 'Employee'
+        },
+        items: {
+            xtype: 'form',
+            store: store,
+            reference: 'form',
+            items: [{
+                xtype: 'textfield',
+                bind: '{name}',
+                name: 'name',
+                fieldLabel: 'Name',
+                allowBlank: false
+            }, {
+                xtype: 'textfield',
+                name: 'salary',
+                bind: '{salary}',
+                fieldLabel: 'Salary',
+                allowBlank: false
+            }],
+            buttons: [{
+                text: 'Create Employee',
+                formBind: true,
+                listeners: {
+                    click: function() {
+                        //this == the button, as we are in the local scope
+                        //this.setText('I was clicked!');
+                        store.add(panelwindow.getForm().getValues());
+                        store.load();
+                        panelwindow.close();
+                        welcomewindow.showAt(200);
+                    }}
+            }]
+        }
+    });
+
+    var welcomewindow=Ext.create('Ext.form.Panel', {
+        id: 'welcomeId',
+        store: store,
+        title: 'Welcome Window',
+        closable: false,
+        height:500,
+        width:500,
+        align: 'center',
+        style: 'margin:0 auto;margin-top:100px;',
+        pack: 'center',
+        autoShow: true,
+        renderTo:document.body, // Div id where the grid has to be rendered
+        viewModel: {
+            type: 'Employee'
+        },
+        items: {
+            xtype: 'form',
+            store: store,
+            reference: 'form',
+            items: [{
+                xtype: 'label',
+                text:'welcome'
+            },
+                {
+                    xtype: 'label',
+                    bind: '{name}',
+                    name: 'name',
+                }],
+            buttons: [{
+                text: 'click to view all Employees',
+                formBind: true,
+                listeners: {
+                    click: function() {
+                        welcomewindow.close();
+                        store.load();
+                        grid.showAt(200);
+                    }}
+            }]
+        }
+    });
+
+
     var gridMenu = Ext.create('Ext.menu.Menu', {
         store: store,
         items: [
@@ -164,6 +254,7 @@ Ext.onReady(function() {
                                     store.remove(selection);
                                     deletePopUP.close();
                                 }
+
                             },
                             {
                                 xtype: 'button',
@@ -178,6 +269,7 @@ Ext.onReady(function() {
                     });
                     deletePopUP.show();
                 }
+
             }]
     });
 
@@ -185,6 +277,10 @@ Ext.onReady(function() {
         xtype : 'employeegridview',
         renderTo: document.body,
         frame: true,
+        style: 'margin:0 auto;margin-top:100px;',
+        width:600,
+        height:400,
+        hidden:true,
         title: 'Employees',
         store: store,
         columns: [{
@@ -214,6 +310,8 @@ Ext.onReady(function() {
             {
                 e.stopEvent();
                 gridMenu.showAt(e.getXY());
+                //var detailView = Ext.ComponentQuery.query('mvvm-DetailView')[0];
+                //detailView.getViewModel().setData({ rec: record });
             }
         }
     });
